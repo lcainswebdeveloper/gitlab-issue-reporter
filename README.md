@@ -8,7 +8,7 @@ Small service for logging issues in Gitlab.
 
 ### Configuration
 - All you will need to do is set a `GITLAB_BASE_URL` (eg `https://gitlab.com/api/v4/projects/`) for your Gitlab instance, your `GITLAB_PROJECT_ID`, `GITLAB_ASSIGNEE_ID` which is your gitlab user id and can be found in you user setting, and finally your `GITLAB_ACCESS_TOKEN` which you can create inside of your Gitlab UI at the following url: [https://gitlab.com/profile/personal_access_tokens]. Be sure to create this token with API access. 
-Once created, i'd recommend you put these in an env file.
+Once created, i'd recommend you put these in an env file. Please see .env.example for details. Ultimately these just get used as values to get passed into our Gitlab class so feel free to set to your requirements.
 
 ### To create an issue
 This service delegates straight to the Gitlab API itself so arguments can be passed as expected for all calls. Please feel free to look at the tests for usage also.   
