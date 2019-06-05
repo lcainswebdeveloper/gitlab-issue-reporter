@@ -1,27 +1,29 @@
 <?php
 
-namespace Redmine\Client;
+namespace Gitlab\Client;
 
 class Guzzle
 {
     protected $client;
     protected $headers;
     protected $status;
-    protected $apikey;
+    protected $accessToken;
+    protected $projectId;
+    protected $assigneeId;
     protected $baseUri;
     protected $apiResponse;
 
-    public function __construct($baseUri, $apiKey)
+    public function __construct($baseUri, $accessToken)
     {
         $this->baseUri = $baseUri;
-        $this->setApikey($apiKey);
+        $this->setAccessToken($accessToken);
         $this->client = new \GuzzleHttp\Client();
     }
 
     protected function setRequestData(array $headers = [])
     {
         $allHeaders = $headers + [
-            'X-Redmine-API-Key' => $this->getApikey(),
+            'Private-Token' => $this->getAccessToken(),
             'Accept' => 'application/json',
             'Content-type' => 'application/json',
         ];
@@ -47,7 +49,7 @@ class Guzzle
         } catch (\Exception $e) {
             $this->setStatus($e->getCode());
             $this->setApiResponse([
-                'error' => $e->getMessage(),
+                'message' => $e->getMessage(),
                 'code' => $e->getCode(),
             ]);
 
@@ -70,8 +72,29 @@ class Guzzle
             $this->setStatus($e->getCode());
             $this->setApiResponse([
                 'exception' => get_class($e),
-                'error' => $e->getMessage(),
-                'data' => json_decode($e->getResponse()->getBody()->getContents()),
+                'message' => $e->getMessage(),
+                'errors' => json_decode($e->getResponse()->getBody()->getContents()),
+                'code' => $e->getCode(),
+            ]);
+
+            return $this;
+        }
+    }
+
+    public function delete(string $url, array $headers = [])
+    {
+        try {
+            $sentHeaders = $this->setRequestData($headers);
+
+            $response = $this->client->delete($url, $sentHeaders);
+            $this->setStatus($response->getStatusCode());
+            $this->setApiResponse(json_decode($response->getBody()));
+
+            return $this;
+        } catch (\Exception $e) {
+            $this->setStatus($e->getCode());
+            $this->setApiResponse([
+                'message' => $e->getMessage(),
                 'code' => $e->getCode(),
             ]);
 
@@ -80,21 +103,21 @@ class Guzzle
     }
 
     /**
-     * Get the value of apikey.
+     * Get the value of accessToken.
      */
-    public function getApikey()
+    public function getAccessToken()
     {
-        return $this->apikey;
+        return $this->accessToken;
     }
 
     /**
-     * Set the value of apikey.
+     * Set the value of accessToken.
      *
      * @return self
      */
-    public function setApikey($apikey)
+    public function setAccessToken($accessToken)
     {
-        $this->apikey = $apikey;
+        $this->accessToken = $accessToken;
 
         return $this;
     }
@@ -164,9 +187,11 @@ class Guzzle
      */
     public function setApiResponse($apiResponse)
     {
-        $apiResponse = (object) $apiResponse;
-        $apiResponse->code = $this->getStatus();
-        $this->apiResponse = $apiResponse;
+        $response = [
+            'data' => $apiResponse,
+            'code' => $this->getStatus(),
+        ];
+        $this->apiResponse = (object) $response;
 
         return $this;
     }
