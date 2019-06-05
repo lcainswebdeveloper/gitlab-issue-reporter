@@ -1,0 +1,6 @@
+develop
+.docker
+docker-compose.yml
+.env
+/vendor/
+.phpunit.result.cache

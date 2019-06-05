@@ -1,0 +1,9 @@
+FROM nginx:alpine
+
+MAINTAINER Lewis Cains
+
+COPY . /var/www/html
+
+COPY .docker/nginx/conf.d/ /etc/nginx/conf.d/
+
+RUN rm -rf .docker
