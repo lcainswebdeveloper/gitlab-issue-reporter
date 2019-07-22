@@ -1,5 +1,6 @@
 {
     "name": "lcainswebdeveloper/gitlab-issue-reporter",
+    "version": "1.0.0",
     "description": "Simple wrapper for logging issues in Gitlab",
     "type": "library",
     "authors": [{
