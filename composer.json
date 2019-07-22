@@ -15,7 +15,7 @@
     },
     "require": {
         "guzzlehttp/guzzle": "^6.3",
-        "vlucas/phpdotenv": "^2.0 || ^4.0",
+        "vlucas/phpdotenv": "^2.0 || ^3.0",
         "fzaninotto/faker": "^1.8"
     },
     "require-dev": {
